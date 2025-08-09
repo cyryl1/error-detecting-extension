@@ -1,4 +1,30 @@
 {
+  "React": {
+    "cats": [12, 18],
+    "description": "React is an open-source JavaScript library for building user interfaces, particularly single-page applications.",
+    "website": "https://reactjs.org",
+    "js": {
+      "React": "",
+      "React.version": "\\d+\\.\\d+\\.\\d+"
+    },
+    "html": [
+      "<[^>]+data-reactroot",
+      "<[^>]+data-reactid",
+      "<[^>]+data-testid"
+    ]
+  },
+  "Next.js": {
+    "cats": [18, 1],
+    "description": "Next.js is a React framework for server-side rendering and static site generation.",
+    "website": "https://nextjs.org",
+    "js": {
+      "__NEXT_DATA__": ""
+    },
+    "html": [
+      "<script[^>]+id=\"__NEXT_DATA__\""
+    ],
+    "implies": ["React"]
+  },
   "11Sight": {
     "cats": [
       52,

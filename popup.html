@@ -4,21 +4,137 @@
   <meta charset="UTF-8">
   <title>Dev Assistant</title>
   <style>
-    body { font-family: Arial, sans-serif; width: 300px; padding: 10px; }
-    h1 { font-size: 16px; }
-    #techStack, #errors { margin-bottom: 20px; }
-    #errors { max-height: 200px; overflow-y: auto; }
-    .error { color: red; font-size: 12px; margin: 5px 0; }
-    button { padding: 5px 10px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 400px;
+      padding: 15px;
+      margin: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.5;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    h1::after {
+      content: '▼';
+      font-size: 12px;
+    }
+    h1.collapsed::after {
+      content: '▶';
+    }
+    .section {
+      margin-bottom: 15px;
+      display: block;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      font-size: 14px;
+    }
+    .section.collapsed {
+      display: none;
+    }
+    #techStack {
+      word-break: break-word;
+      color: #2e7d32;
+      font-weight: 500;
+    }
+    #techStack.error {
+      color: #d32f2f;
+    }
+    .error {
+      background-color: #fff0f0;
+      padding: 8px;
+      margin: 5px 0;
+      border-left: 4px solid #e57373;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+    .error.hydration, .error.console {
+      border-left-color: #0288d1;
+      background-color: #e1f5fe;
+    }
+    .timestamp {
+      color: #555;
+      font-size: 12px;
+      display: block;
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #0288d1;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #01579b;
+    }
+    button#clear {
+      background-color: #d32f2f;
+    }
+    button#clear:hover {
+      background-color: #b71c1c;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+      }
+      h1 {
+        background-color: #333;
+      }
+      .section {
+        background-color: #2a2a2a;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+      #techStack {
+        color: #66bb6a;
+      }
+      #techStack.error {
+        color: #ef5350;
+      }
+      .error {
+        background-color: #3a1c1c;
+        border-left-color: #e57373;
+      }
+      .error.hydration, .error.console {
+        background-color: #1c2526;
+        border-left-color: #4fc3f7;
+      }
+      .timestamp {
+        color: #aaa;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Tech Stack</h1>
-  <div id="techStack">Loading...</div>
-  <h1>Errors</h1>
-  <div id="errors">No errors detected.</div>
-  <button id="refresh">Refresh</button>
-  <button id="clear">Clear Errors</button>
+  <h1 id="techHeader">Tech Stack</h1>
+  <div id="techStack" class="section">Loading...</div>
+  <h1 id="errorsHeader">Errors</h1>
+  <div id="errors" class="section">No errors detected.</div>
+  <div class="button-container">
+    <button id="refresh">Refresh</button>
+    <button id="clear">Clear Errors</button>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>
