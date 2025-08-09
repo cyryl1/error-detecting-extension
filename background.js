@@ -1,31 +1,47 @@
-import { GoogleGenAI } from "@google/genai";
+// Collect webpage data for tech stack detection
+function collectData() {
+  const html = document.documentElement.outerHTML;
+  const cookies = document.cookie;
+  const jsVariables = {
+    'jQuery': window.jQuery ? window.jQuery.fn.jquery : undefined,
+    'React': window.React ? window.React.version : undefined,
+    'elevensight': window.elevensight ? true : undefined,
+    'elevensightApp': window.elevensightApp ? true : undefined
+  };
+  const scriptSrc = Array.from(document.getElementsByTagName('script'))
+    .map(script => script.src)
+    .filter(src => src);
+  return { html, cookies, jsVariables, scriptSrc };
+}
 
-const ai = new GoogleGenAI({ apiKey: "AIzaSyCz7lHPgOm0ZuiIrZ3ZtxDRUFFJ0JhdQ6U" });
-
-// AIzaSyCz7lHPgOm0ZuiIrZ3ZtxDRUFFJ0JhdQ6U
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === "ERROR_CAPTURED") {
-        handleError(request);
-    }
+// Handle messages from background or popup
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'collect_data') {
+    sendResponse(collectData());
+  }
 });
 
-async function handleError(errorData) {
-    const prompt = `You are a frontend debugging assistant.
-    Here's an error: ${errorData.message} \n
-    Stack: ${errorData.stack}\n
-    Suggest a fix with explanation.`;
+// Monitor JavaScript errors in real-time
+window.addEventListener('error', (event) => {
+  const errorInfo = {
+    type: 'javascript',
+    message: event.message,
+    source: event.filename,
+    line: event.lineno,
+    column: event.colno,
+    stack: event.error ? event.error.stack : undefined,
+    timestamp: new Date().toISOString()
+  };
+  chrome.runtime.sendMessage({ type: 'error_detected', error: errorInfo });
+});
 
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
-        });
-
-        const suggestion = await response.response.text();
-
-        chrome.storage.local.set({ lastSuggestion: suggestion });
-    } catch (err) {
-        console.error("Gemini API Error:", err);
-    }
-}
+// Monitor unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  const errorInfo = {
+    type: 'promise',
+    message: event.reason.message || 'Unhandled promise rejection',
+    source: event.reason.stack || 'Unknown source',
+    timestamp: new Date().toISOString()
+  };
+  chrome.runtime.sendMessage({ type: 'error_detected', error: errorInfo });
+});

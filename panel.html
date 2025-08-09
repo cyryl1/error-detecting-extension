@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dev Assistant</title>
+  <title>Dev Assistant Panel</title>
   <style>
-    body { font-family: Arial, sans-serif; width: 300px; padding: 10px; }
+    body { font-family: Arial, sans-serif; padding: 10px; }
     h1 { font-size: 16px; }
     #techStack, #errors { margin-bottom: 20px; }
-    #errors { max-height: 200px; overflow-y: auto; }
+    #errors { max-height: 400px; overflow-y: auto; }
     .error { color: red; font-size: 12px; margin: 5px 0; }
     button { padding: 5px 10px; }
   </style>
@@ -17,8 +17,7 @@
   <div id="techStack">Loading...</div>
   <h1>Errors</h1>
   <div id="errors">No errors detected.</div>
-  <button id="refresh">Refresh</button>
-  <button id="clear">Clear Errors</button>
-  <script src="popup.js"></script>
+  <button onclick="updateUI()">Refresh</button>
+  <button onclick="chrome.runtime.sendMessage({type: 'clear_errors', tabId: chrome.devtools.inspectedWindow.tabId}, () => updateUI())">Clear Errors</button>
 </body>
 </html>
